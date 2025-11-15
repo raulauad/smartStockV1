@@ -1,0 +1,6 @@
+@Smart_Stock_V1_HostAddress = http://localhost:5050
+
+GET {{Smart_Stock_V1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
