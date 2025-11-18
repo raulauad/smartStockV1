@@ -3,13 +3,12 @@
     public class VentaDia
     {
         public int VentaDiaId { get; set; }
-        public int IdDia { get; set; }
-        public decimal TotalVentaDia { get; set; } = 0; //(VentaDia - CompraDia)
-        public decimal TotalGananciaVenta { get; set; } = 0;
-
+        public int DiaId { get; set; }
         public Dia Dia { get; set; } = null!;
-        public ICollection<DetalleVenta> DetallesVentas { get; set; } = new List<DetalleVenta>();
-        public CajaDia? CajaDia { get; set; } 
 
+        public decimal TotalVentaDia { get; set; }
+        public decimal TotalGananciaVenta { get; set; }
+        public ICollection<DetalleVenta> DetallesVentas { get; set; } = new List<DetalleVenta>();
+        public CajaDia? CajaDia { get; set; }
     }
 }

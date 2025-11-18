@@ -16,7 +16,7 @@ namespace SmartStockV1.Models
         public int UsuarioId {  get; set; }
         public int RolId {  get; set; }
         public string UsuarioNombre { get; set; } = null!;
-        public string UsuarioDireccion { get; set; } = null!;
+        public string? UsuarioDireccion { get; set; } = null!;
         public string? UsuarioTelefono { get; set; }
         public DateTime AltaUsuario { get; set; } = DateTime.UtcNow; //Momento en el que el admin da de alta un usuario
         public DateTime? UltConexion { get; set; } //Momento en el que el usuario desconecta de la aplicacion

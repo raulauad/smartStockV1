@@ -12,7 +12,7 @@
         public string EstadoDescripcion { get; set; } = string.Empty;// "Inactivo", "Activo/Conectado", etc.
         public DateTime AltaUsuario { get; set; }   // Momento en que se dio de alta
         public DateTime? HoraConexion { get; set; } // Último momento que se conectó
-        public DateTime? UltConexion { get; set; }  //  momento que se desconectó
+        public DateTime? UltConexion { get; set; }  //  Momento que se desconectó
         public DateTime UltActualizacion { get; set; }  // Última actualización del registro de usuario
     }
 }

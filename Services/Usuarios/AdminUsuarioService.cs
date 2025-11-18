@@ -42,7 +42,7 @@ namespace SmartStockV1.Services.Usuarios
         private static UsuarioResponseDto MapToUsuarioResponseDto(Usuario u, DateTime ultActualizacion)
         {
             // Por si la navegación Rol viene null, usamos el enum como respaldo
-            string nombreRol = u.Rol?.Nombre
+            string nombreRol = u.Rol?.NombreRol
                                ?? ((TipoRol)u.RolId).ToString();
 
             // bool EstadoUsuario = true si NO está Inactivo
@@ -80,7 +80,7 @@ namespace SmartStockV1.Services.Usuarios
                 IdUsuario = u.UsuarioId,
                 NombreUsuario = u.UsuarioNombre,
                 IdRol = u.RolId,
-                NombreRol = u.Rol?.Nombre ?? ((TipoRol)u.RolId).ToString(),
+                NombreRol = u.Rol?.NombreRol ?? ((TipoRol)u.RolId).ToString(),
                 EstaActivo = u.EstadoUsuario != EstadoUsuario.Inactivo,
                 FechaAlta = u.AltaUsuario,
                 UltimaConexion = u.UltConexion

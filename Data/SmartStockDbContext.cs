@@ -1,14 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartStockV1.Models;
 
-
 namespace SmartStockV1.Data
 {
     public class SmartStockDbContext : DbContext
     {
-        public SmartStockDbContext(DbContextOptions<SmartStockDbContext> options) :base(options) { }
+        public SmartStockDbContext(DbContextOptions<SmartStockDbContext> options) : base(options) { }
 
-        //DbSets
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Producto> Producto { get; set; }
@@ -28,191 +26,148 @@ namespace SmartStockV1.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //Configuraciones adicionales
 
-            //Seeds de roles base
             modelBuilder.Entity<Rol>().HasData(
-                new Rol { RolId = (int)TipoRol.Admin, Nombre = "Admin" },
-                new Rol { RolId = (int)TipoRol.Usuario, Nombre = "Usuario" }
+                new Rol { RolId = (int)TipoRol.Admin, NombreRol = "Admin" },
+                new Rol { RolId = (int)TipoRol.Usuario, NombreRol = "Usuario" }
             );
 
-            //Claves Primarias
-            modelBuilder.Entity<Usuario>() //Usuario
-                .HasKey(u => u.UsuarioId);
+            modelBuilder.Entity<Usuario>().HasKey(u => u.UsuarioId);
+            modelBuilder.Entity<Rol>().HasKey(r => r.RolId);
+            modelBuilder.Entity<Categoria>().HasKey(c => c.CategoriaId);
+            modelBuilder.Entity<Proveedor>().HasKey(p => p.ProveedorId);
+            modelBuilder.Entity<Producto>().HasKey(p => p.ProductoId);
+            modelBuilder.Entity<DetalleCompra>().HasKey(dc => dc.DetalleCompraId);
+            modelBuilder.Entity<DetalleCompraItem>().HasKey(dci => dci.CompraItemId);
+            modelBuilder.Entity<DetalleVenta>().HasKey(dv => dv.DetalleVentaId);
+            modelBuilder.Entity<DetalleVentaItem>().HasKey(dvi => dvi.VentaItemId);
+            modelBuilder.Entity<MovimientoStock>().HasKey(ms => ms.MovimientoId);
+            modelBuilder.Entity<StockActual>().HasKey(sa => sa.ProductoId);
+            modelBuilder.Entity<CompraDia>().HasKey(cd => cd.CompraDiaId);
+            modelBuilder.Entity<VentaDia>().HasKey(vd => vd.VentaDiaId);
+            modelBuilder.Entity<CajaDia>().HasKey(cj => cj.CajaDiaId);
+            modelBuilder.Entity<Dia>().HasKey(d => d.DiaId);
 
-            modelBuilder.Entity<Rol>() //Rol
-                .HasKey(r => r.RolId);
-
-            modelBuilder.Entity<Categoria>() //Categoria
-                .HasKey(c => c.CategoriaId);
-
-            modelBuilder.Entity<Proveedor>() //Proveedor
-                .HasKey(p => p.ProveedorId);
-
-            modelBuilder.Entity<Producto>() //Producto
-                .HasKey(p => p.ProductoId);
-
-            modelBuilder.Entity<DetalleCompra>() //DetalleCompra
-                .HasKey(dc => dc.DetalleCompraId);
-
-            modelBuilder.Entity<DetalleVenta>() //DetalleVenta
-                .HasKey(dv => dv.DetalleVentaId);
-
-            modelBuilder.Entity<DetalleCompraItem>() //DetalleCompraItem
-                .HasKey(dci => dci.CompraItemId);
-
-            modelBuilder.Entity<DetalleVentaItem>() //DetalleVentaItem
-                .HasKey(dvi => dvi.VentaItemId);
-
-            modelBuilder.Entity<MovimientoStock>() //MovimientoStock
-                .HasKey(ms => ms.MovimientoId);
-
-            modelBuilder.Entity<StockActual>() //StockActual
-                .HasKey(sa => sa.ProductoId);
-
-            modelBuilder.Entity<Dia>() //Dia
-                .HasKey(d => d.DiaId);
-
-            modelBuilder.Entity<CompraDia>() //CompraDia
-                .HasKey(cd => cd.CompraDiaId);
-
-            modelBuilder.Entity<VentaDia>() //VentaDia
-                .HasKey(vd => vd.VentaDiaId);
-
-            modelBuilder.Entity<CajaDia>() //CajaDia
-                .HasKey(cd => cd.CajaDiaId);
-
-            //----- Relaciones -----
-            //Rol - Usuario (1 a N)
             modelBuilder.Entity<Usuario>()
                 .HasOne(u => u.Rol)
                 .WithMany(r => r.UsuariosCreados)
                 .HasForeignKey(u => u.RolId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Admin - Categoria (1 a N)
             modelBuilder.Entity<Categoria>()
                 .HasOne(c => c.Usuario)
                 .WithMany(u => u.CategoriasCreadas)
                 .HasForeignKey(c => c.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Admin - Proveedor (1 a N)
             modelBuilder.Entity<Proveedor>()
                 .HasOne(p => p.Usuario)
                 .WithMany(u => u.ProveedoresCreados)
                 .HasForeignKey(p => p.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Categoria - Producto (1 a N)
-            modelBuilder.Entity<Producto>()
-                .HasOne(p => p.Categoria)
-                .WithMany(c => c.Productos)
-                .HasForeignKey(p => p.CategoriaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //Usuario - Producto (1 a N)
-            modelBuilder.Entity<Producto>()
-                .HasOne(p => p.Usuario)
-                .WithMany(u => u.ProductosCreados)
-                .HasForeignKey(p => p.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //Usuario - DetalleCompra (1 a N)
             modelBuilder.Entity<DetalleCompra>()
                 .HasOne(dc => dc.Usuario)
                 .WithMany(u => u.DetallesCompra)
                 .HasForeignKey(dc => dc.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Proveedor - DetalleCompra (1 a N)
-            modelBuilder.Entity<DetalleCompra>()
-                .HasOne(dc => dc.Proveedor)
-                .WithMany(p => p.DetallesCompra)
-                .HasForeignKey(dc => dc.ProveedorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //DetalleCompra - DetalleCompraItem (1 a N)
-            modelBuilder.Entity<DetalleCompraItem>()
-                .HasOne(dci => dci.DetalleCompra)
-                .WithMany(dc => dc.ItemsDetalleCompra)
-                .HasForeignKey(dci => dci.DetalleCompraId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //Producto - DetalleCompraItem (1 a N)
-            modelBuilder.Entity<DetalleCompraItem>()
-                .HasOne(dci => dci.Producto)
-                .WithMany(p => p.DetallesCompraItem)
-                .HasForeignKey(dci => dci.ProductoId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //Usuario - DetalleVenta (1 a N)
             modelBuilder.Entity<DetalleVenta>()
                 .HasOne(dv => dv.Usuario)
                 .WithMany(u => u.DetallesVenta)
                 .HasForeignKey(dv => dv.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //DetalleVenta - DetalleVentaItem (1 a N)
-            modelBuilder.Entity<DetalleVentaItem>()
-                .HasOne(dvi => dvi.DetalleVenta)
-                .WithMany(dv => dv.ItemsDetalleVenta)
-                .HasForeignKey(dvi => dvi.DetalleVentaId)
+            modelBuilder.Entity<Producto>()
+                .HasOne(p => p.Categoria)
+                .WithMany(c => c.Productos)
+                .HasForeignKey(p => p.CategoriaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Producto - DetalleVentaItem (1 a N)
+            modelBuilder.Entity<Producto>()
+                .HasOne(p => p.Usuario)
+                .WithMany(u => u.ProductosCreados)
+                .HasForeignKey(p => p.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DetalleCompraItem>()
+                .HasOne(dci => dci.Producto)
+                .WithMany(p => p.DetallesCompraItem)
+                .HasForeignKey(dci => dci.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<DetalleVentaItem>()
                 .HasOne(dvi => dvi.Producto)
-                .WithMany()
+                .WithMany(p => p.DetallesVentaItem)
                 .HasForeignKey(dvi => dvi.ProductoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Producto - MovimientoStock (1 a N)
             modelBuilder.Entity<MovimientoStock>()
                 .HasOne(ms => ms.Producto)
-                .WithMany()
+                .WithMany(p => p.MovimientosStock)
                 .HasForeignKey(ms => ms.ProductoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Producto - StockActual (1 a 1)
             modelBuilder.Entity<StockActual>()
                 .HasOne(sa => sa.Producto)
                 .WithOne()
                 .HasForeignKey<StockActual>(sa => sa.ProductoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //----- Relaciones Diarias -----
+            modelBuilder.Entity<DetalleCompraItem>()
+                .HasOne(dci => dci.DetalleCompra)
+                .WithMany(dc => dc.ItemsDetalleCompra)
+                .HasForeignKey(dci => dci.DetalleCompraId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Dia - CompraDia (1 a 1)
+            modelBuilder.Entity<DetalleVentaItem>()
+                .HasOne(dvi => dvi.DetalleVenta)
+                .WithMany(dv => dv.ItemsDetalleVenta)
+                .HasForeignKey(dvi => dvi.DetalleVentaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<CompraDia>()
-                .HasMany(cd => cd.DetallesCompra)
-                .WithOne()
-                .HasForeignKey(dc => dc.CompraDiaId)
+                .HasOne(cd => cd.Dia)
+                .WithOne(d => d.CompraDia)
+                .HasForeignKey<CompraDia>(cd => cd.DiaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Dia - VentaDia (1 a 1)
             modelBuilder.Entity<VentaDia>()
-                .HasMany(vd => vd.DetallesVentas)
-                .WithOne()
-                .HasForeignKey(dv => dv.VentaDiaId)
+                .HasOne(vd => vd.Dia)
+                .WithOne(d => d.VentaDia)
+                .HasForeignKey<VentaDia>(vd => vd.DiaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // CompraDia - CajaDia (1 a 1)
             modelBuilder.Entity<CajaDia>()
-                .HasOne(cd => cd.CompraDia)
-                .WithOne()
-                .HasForeignKey<CajaDia>(cd => cd.CompraDiaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(cj => cj.Dia)
+                .WithOne(d => d.CajaDia)
+                .HasForeignKey<CajaDia>(cj => cj.DiaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // VentaDia - CajaDia (1 a 1)
-            modelBuilder.Entity<CajaDia>()
-                .HasOne(cd => cd.VentaDia)
-                .WithOne()
-                .HasForeignKey<CajaDia>(cd => cd.VentaDiaId)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().Property(p => p.PrecioCosto).HasPrecision(18, 2);
+            modelBuilder.Entity<Producto>().Property(p => p.PrecioVenta).HasPrecision(18, 2);
+
+            modelBuilder.Entity<DetalleCompraItem>().Property(d => d.CantidadItem).HasPrecision(18, 2);
+            modelBuilder.Entity<DetalleCompraItem>().Property(d => d.PrecioCostoItem).HasPrecision(18, 2);
+
+            modelBuilder.Entity<DetalleVentaItem>().Property(d => d.PrecioVentaItem).HasPrecision(18, 2);
+            modelBuilder.Entity<DetalleVentaItem>().Property(d => d.CantidadItem).HasPrecision(18, 2);
+
+            modelBuilder.Entity<CajaDia>().Property(c => c.TotalCierre).HasPrecision(18, 2);
+            modelBuilder.Entity<CajaDia>().Property(c => c.TotalGananciaDia).HasPrecision(18, 2);
+
+            modelBuilder.Entity<CompraDia>().Property(cd => cd.TotalCompraDia).HasPrecision(18, 2);
+            modelBuilder.Entity<VentaDia>().Property(vd => vd.TotalVentaDia).HasPrecision(18, 2);
+            modelBuilder.Entity<VentaDia>().Property(vd => vd.TotalGananciaVenta).HasPrecision(18, 2);
+
+            modelBuilder.Entity<DetalleCompra>().Property(dc => dc.SubtotalDetalleCompra).HasPrecision(18, 2);
+
+            modelBuilder.Entity<DetalleVenta>().Property(dv => dv.SubtotalDetalleVenta).HasPrecision(18, 2);
+
+            modelBuilder.Entity<DetalleVentaItem>().Property(dvi => dvi.PrecioCostoItem).HasPrecision(18, 2);
+
+            modelBuilder.Entity<MovimientoStock>().Property(ms => ms.Cantidad).HasPrecision(18, 2);
         }
-
-
     }
-
 }
+

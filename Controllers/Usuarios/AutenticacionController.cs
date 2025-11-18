@@ -15,35 +15,35 @@ namespace SmartStockV1.Controllers
     public class AutenticacionController : ControllerBase
     {
         private readonly IAutenticacionService _autenticacionService;
-
+    
         public AutenticacionController(IAutenticacionService autenticacionService)
         {
             _autenticacionService = autenticacionService;
         }
-
-        /// <summary>
-        /// Login de USUARIO/EMPLEADO.
-        /// - Verifica nombre + contraseña.
-        /// - Verifica que NO esté inactivo.
-        /// - Deja al usuario en estado ActivoConectado.
-        /// </summary>
-        /// <param name="dto">NombreUsuario + ContraseñaPlano.</param>
-        [HttpPost("login-usuario")]
-        public async Task<ActionResult<UsuarioResponseDto>> LoginUsuario(
-            [FromBody] LoginUsuarioRequestDto dto)
+            
+        /// <summary>       
+        /// Login de USUARIO/EMPLEADO.  
+        /// - Verifica nombre + contraseña. 
+        /// - Verifica que NO esté inactivo.    
+        /// - Deja al usuario en estado ActivoConectado.    
+        /// </summary>  
+        /// <param name="dto">NombreUsuario + ContraseñaPlano.</param>  
+        [HttpPost("login-usuario")]     
+        public async Task<ActionResult<UsuarioResponseDto>> LoginUsuario(   
+            [FromBody] LoginUsuarioRequestDto dto)      
         {
             try
             {
                 var usuario = await _autenticacionService.LoginUsuario(dto);
-                return Ok(usuario);
+                return Ok(usuario);     
             }
-            catch (Exception ex)
+            catch (Exception ex)    
             {
                 // Para MVP: devolvemos BadRequest con mensaje.
                 // Más adelante se puede reemplazar por middleware global de errores.
                 return BadRequest(new { error = ex.Message });
-            }
-        }
+            }   
+        }   
 
         /// <summary>
         /// Login de ADMIN.

@@ -11,7 +11,7 @@ namespace SmartStockV1.Models
     public class Rol
     {
         public int RolId { get; set; }
-        public string Nombre { get; set; }
+        public string NombreRol { get; set; }
         public ICollection<Usuario> UsuariosCreados { get; set; } = new List<Usuario>();
     }
 }

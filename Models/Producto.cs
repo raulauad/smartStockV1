@@ -9,7 +9,7 @@ namespace SmartStockV1.Models
         public int UsuarioId { get; set; }
         public string Nombre { get; set; } = null!;
         public string? CodigoBarra { get; set; }
-        public string? Descripcion { get; set; }
+        public string Descripcion { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
         public bool EstadoProducto { get; set; } = false;
