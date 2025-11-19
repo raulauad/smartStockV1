@@ -10,7 +10,7 @@ namespace SmartStockV1.Data
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Producto> Producto { get; set; }
-        public DbSet<Categoria> Categoria { get; set; }
+        public DbSet<Categoria> Categoria { get; set; } 
         public DbSet<Proveedor> Proveedor { get; set; }
         public DbSet<DetalleCompra> DetalleCompra { get; set; }
         public DbSet<DetalleCompraItem> DetalleCompraItem { get; set; }
