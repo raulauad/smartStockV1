@@ -10,6 +10,8 @@
 
         public bool EstaActivo { get; set; }// Mapea al enum EstadoUsuario (0 = Inactivo, 1 = ActivoDesconectado, 2 = ActivoConectado), valor numérico del enum
         public string EstadoDescripcion { get; set; } = string.Empty;// "Inactivo", "Activo/Conectado", etc.
+        public string DireccionUsuario { get; set; } = string.Empty;
+        public string? TelefonoUsuario { get; set; }
         public DateTime AltaUsuario { get; set; }   // Momento en que se dio de alta
         public DateTime? HoraConexion { get; set; } // Último momento que se conectó
         public DateTime? UltConexion { get; set; }  //  Momento que se desconectó

@@ -65,6 +65,8 @@ namespace SmartStockV1.Services.Usuarios
                 NombreRol = nombreRol,
                 EstaActivo = estaActivo,
                 EstadoDescripcion = estadoDescripcion,
+                DireccionUsuario = u.UsuarioDireccion,
+                TelefonoUsuario = u.UsuarioTelefono,
                 AltaUsuario = u.AltaUsuario,
                 HoraConexion = u.HoraConexion,
                 UltConexion = u.UltConexion,
@@ -110,6 +112,8 @@ namespace SmartStockV1.Services.Usuarios
             var nuevoUsuario = new Usuario
             {
                 UsuarioNombre = dto.NombreUsuario,
+                UsuarioDireccion = dto.DireccionUsuario,
+                UsuarioTelefono = dto.TelefonoUsuario,
                 RolId = dto.IdRol, // puede ser Admin o Usuario, según lo haya decidido el Admin
                 ContraseñaHash = hash,
                 ContraseñaSalt = salt,
@@ -141,6 +145,8 @@ namespace SmartStockV1.Services.Usuarios
             // Datos básicos
             usuario.UsuarioNombre = dto.NombreUsuario;
             usuario.RolId = dto.IdRol;
+            usuario.UsuarioDireccion = dto.DireccionUsuario ?? usuario.UsuarioDireccion;
+            usuario.UsuarioTelefono = dto.TelefonoUsuario;
 
             // Mapear bool -> enum EstadoUsuario
             if (dto.EstadoUsuario)
