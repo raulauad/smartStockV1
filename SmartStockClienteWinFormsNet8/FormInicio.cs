@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SmartStockClienteWinForms.Helpers;
+using SmartStockClienteWinFormsNet8.Dtos.Usuarios;
+using SmartStockClienteWinFormsNet8.Servicios;
+using SmartStockClienteWinFormsNet8.Helpers;
 
-
-namespace SmartStockClienteWinForms
+namespace SmartStockClienteWinFormsNet8
 {
     public partial class FormInicio : Form
     {

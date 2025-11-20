@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace SmartStockClienteWinForms.Helpers
+namespace SmartStockClienteWinFormsNet8.Helpers
 {
     public static class Temas
     {

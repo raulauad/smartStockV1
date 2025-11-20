@@ -1,4 +1,4 @@
-﻿namespace SmartStockClienteWinForms
+﻿namespace SmartStockClienteWinFormsNet8
 {
     partial class FormRegistrarAdmin
     {

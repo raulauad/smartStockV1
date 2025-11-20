@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartStockClienteWinForms.Dtos.Usuarios
+namespace SmartStockClienteWinFormsNet8.Dtos.Usuarios
 {
     public class UsuarioResponseDto
     {

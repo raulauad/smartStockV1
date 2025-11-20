@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SmartStockClienteWinForms.Dtos.Usuarios;
-using SmartStockClienteWinForms.Servicios;
-using SmartStockClienteWinForms.Helpers;
+using SmartStockClienteWinFormsNet8.Dtos.Usuarios;
+using SmartStockClienteWinFormsNet8.Servicios;
+using SmartStockClienteWinFormsNet8.Helpers;
 
 
-namespace SmartStockClienteWinForms
+
+namespace SmartStockClienteWinFormsNet8
 {
     public partial class FormRegistrarAdmin : Form
     {
@@ -41,7 +42,7 @@ namespace SmartStockClienteWinForms
             btnRegistrar.FlatStyle = FlatStyle.Flat;
             btnRegistrar.FlatAppearance.BorderSize = 0;
 
-            btnCancelar.BackColor = Temas.BotonSecundario;
+            btnCancelar.BackColor = Temas.BotonPrimario;  
             btnCancelar.ForeColor = Temas.TextoClaro;
             btnCancelar.FlatStyle = FlatStyle.Flat;
             btnCancelar.FlatAppearance.BorderSize = 0;

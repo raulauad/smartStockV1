@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using SmartStockClienteWinForms.Dtos.Usuarios;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using SmartStockClienteWinForms.Dtos.Usuarios;
+using SmartStockClienteWinFormsNet8.Dtos.Usuarios;
 
-namespace SmartStockClienteWinForms.Servicios
+namespace SmartStockClienteWinFormsNet8.Servicios
 {
     public class ApiAutenticacionCliente
     {
         private readonly HttpClient _http;
 
-      
+
         private const string ApiBase = "https://localhost:44322";
 
         public ApiAutenticacionCliente()

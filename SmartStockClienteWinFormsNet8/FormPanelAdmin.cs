@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SmartStockClienteWinForms.Dtos.Usuarios;
-using SmartStockClienteWinForms.Helpers;
+using SmartStockClienteWinFormsNet8.Helpers;
+using SmartStockClienteWinFormsNet8.Servicios;
+using SmartStockClienteWinFormsNet8.Dtos.Usuarios;
 
-namespace SmartStockClienteWinForms
+namespace SmartStockClienteWinFormsNet8
 {
     public partial class FormPanelAdmin : Form
     {

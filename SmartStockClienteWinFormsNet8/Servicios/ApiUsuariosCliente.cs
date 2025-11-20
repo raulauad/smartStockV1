@@ -5,11 +5,14 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using SmartStockClienteWinForms.Dtos.Usuarios;
 using static System.Net.WebRequestMethods;
+using System.Net.Http;
+using SmartStockClienteWinFormsNet8.Dtos.Usuarios;
 
 
-namespace SmartStockClienteWinForms.Servicios
+
+
+namespace SmartStockClienteWinFormsNet8.Servicios
 {
     public class ApiUsuariosCliente
     {

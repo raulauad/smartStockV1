@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartStockClienteWinForms.Dtos.Usuarios
+namespace SmartStockClienteWinFormsNet8.Dtos.Usuarios.Dtos.Usuarios
 {
-    public class LoginAdminRequestDto
+    public class LoginUsuarioRequestDto
     {
-        public string NombreAdmin { get; set; } = string.Empty;
+        public string NombreUsuario { get; set; } = string.Empty;
         public string ContraseñaPlano { get; set; } = string.Empty;
     }
 }
