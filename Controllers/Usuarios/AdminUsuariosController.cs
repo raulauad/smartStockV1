@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartStockV1.Dtos.Usuarios;
+using SmartStockV1.Dtos.Usuarios.Requests.Admin;
+using SmartStockV1.Dtos.Usuarios.Responses.Usuarios;
 using SmartStockV1.Interfaces.Usuarios;
 
 namespace SmartStockV1.Controllers
@@ -52,6 +53,21 @@ namespace SmartStockV1.Controllers
                 return Ok(admin);
             }
             catch (Exception ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("usuario/{id:int}")]
+
+        public async Task<ActionResult<UsuarioResponseDto>> ObtenerUsuarioPorId(int id)
+        {
+            try
+            {
+                var usuario = await _usuarioService.ObtenerPorId(id);
+                return Ok(usuario);
+            }
+            catch(Exception ex)
             {
                 return NotFound(new { error = ex.Message });
             }

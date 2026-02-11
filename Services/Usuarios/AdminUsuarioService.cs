@@ -1,15 +1,16 @@
 ﻿using SmartStockV1.Models;
-using SmartStockV1.Dtos.Usuarios;
 using SmartStockV1.Interfaces.Usuarios;
 using SmartStockV1.Repositories.Usuarios;
 using System.Security.Cryptography;
 using System.Text;
+using SmartStockV1.Dtos.Usuarios.Requests.Admin;
+using SmartStockV1.Dtos.Usuarios.Responses.Usuarios;
 
 namespace SmartStockV1.Services.Usuarios
 {
     // CU01 : Servicio de gestión de usuarios (alta, edición, consulta)
     // Lo usa el Admin desde el panel de administración
-    public class AdminUsuarioService : IUsuarioService
+    public sealed class AdminUsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
 
@@ -27,29 +28,17 @@ namespace SmartStockV1.Services.Usuarios
             hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(contraseña));
         }
 
-        /// <summary>
-        /// Valida que el IdRol que viene en el DTO corresponda a un valor del enum TipoRol.
-        /// </summary>
         private static void ValidarRol(int idRol)
         {
             if (!Enum.IsDefined(typeof(TipoRol), idRol))
-                throw new Exception($"El rol con Id {idRol} no es un rol válido.");
+                throw new ArgumentOutOfRangeException(nameof(idRol), $"El rol con Id {idRol} no es válido.");
         }
 
-        /// <summary>
-        /// Mapea la entidad Usuario al DTO que usa el Admin.
-        /// </summary>
-        private static UsuarioResponseDto MapToUsuarioResponseDto(Usuario u, DateTime ultActualizacion)
-        {
-            // Por si la navegación Rol viene null, usamos el enum como respaldo
-            string nombreRol = u.Rol?.NombreRol
-                               ?? ((TipoRol)u.RolId).ToString();
+        private static string GetNombreRol(Usuario u)
+            => u.Rol?.NombreRol ?? ((TipoRol)u.RolId).ToString();
 
-            // bool EstadoUsuario = true si NO está Inactivo
-            bool estaActivo = u.EstadoUsuario != EstadoUsuario.Inactivo;
-
-            // Descripción legible del estado
-            string estadoDescripcion = u.EstadoUsuario switch
+        private static string GetEstadoDescripcion(EstadoUsuario estado)
+            => estado switch
             {
                 EstadoUsuario.Inactivo => "Inactivo",
                 EstadoUsuario.ActivoDesconectado => "Activo (desconectado)",
@@ -57,75 +46,87 @@ namespace SmartStockV1.Services.Usuarios
                 _ => "Desconocido"
             };
 
-            return new UsuarioResponseDto
-            {
-                IdUsuario = u.UsuarioId,
-                NombreUsuario = u.UsuarioNombre,
-                IdRol = u.RolId,
-                NombreRol = nombreRol,
-                EstaActivo = estaActivo,
-                EstadoDescripcion = estadoDescripcion,
-                DireccionUsuario = u.UsuarioDireccion,
-                TelefonoUsuario = u.UsuarioTelefono,
-                AltaUsuario = u.AltaUsuario,
-                HoraConexion = u.HoraConexion,
-                UltConexion = u.UltConexion,
-                UltActualizacion = ultActualizacion
-            };
+        // Response (record): se construye, no se setea con object initializer si tu record es con ctor.
+        private static UsuarioResponseDto MapToUsuarioResponseDto(Usuario u, DateTime ultActualizacion)
+        {
+            var nombreRol = GetNombreRol(u);
+            var estaActivo = u.EstadoUsuario != EstadoUsuario.Inactivo;
+            var estadoDescripcion = GetEstadoDescripcion(u.EstadoUsuario);
+
+            // Si tu UsuarioResponseDto record es con constructor primario, usá esto:
+            // return new UsuarioResponseDto(...);
+
+            // Si tu record es "property record" con init, esto también sirve:
+            return new UsuarioResponseDto(
+                IdUsuario: u.UsuarioId,
+                NombreUsuario: u.UsuarioNombre,
+                IdRol: u.RolId,
+                NombreRol: nombreRol,
+                EstaActivo: estaActivo,
+                EstadoDescripcion: estadoDescripcion,
+                DireccionUsuario: u.UsuarioDireccion,
+                TelefonoUsuario: u.UsuarioTelefono,
+                AltaUsuario: u.AltaUsuario,
+                HoraConexion: u.HoraConexion,
+                UltConexion: u.UltConexion,
+                UltActualizacion: ultActualizacion
+            );
         }
 
-        /// <summary> Listar usuarios </summary>
         private static UsuarioAdminListItemDto MapToUsuarioAdminListItemDto(Usuario u)
         {
-            return new UsuarioAdminListItemDto
-            {
-                IdUsuario = u.UsuarioId,
-                NombreUsuario = u.UsuarioNombre,
-                IdRol = u.RolId,
-                NombreRol = u.Rol?.NombreRol ?? ((TipoRol)u.RolId).ToString(),
-                EstaActivo = u.EstadoUsuario != EstadoUsuario.Inactivo,
-                FechaAlta = u.AltaUsuario,
-                UltimaConexion = u.UltConexion
-            };
+            var nombreRol = GetNombreRol(u);
+            var estaActivo = u.EstadoUsuario != EstadoUsuario.Inactivo;
+
+            return new UsuarioAdminListItemDto(
+                IdUsuario: u.UsuarioId,
+                NombreUsuario: u.UsuarioNombre,
+                IdRol: u.RolId,
+                NombreRol: nombreRol,
+                EstaActivo: estaActivo,
+                FechaAlta: u.AltaUsuario,
+                UltimaConexion: u.UltConexion
+            );
         }
 
-        // ==================== CREAR USUARIO (ADMIN / USUARIO) ====================
+        // ==================== CREAR USUARIO ====================
 
         public async Task<UsuarioResponseDto> CrearUsuario(AltaUsuarioRequestDto dto)
         {
-            // 1) Validar duplicado
-            var yaExiste = await _usuarioRepository.ExistsByNombreAsync(dto.NombreUsuario);
-            if (yaExiste)
-                throw new Exception("Ya existe un usuario con ese nombre.");
+            if (dto is null)
+                throw new ArgumentException("El body es requerido.");
 
-            // 2) Validar rol contra el enum
+            var nombre = dto.NombreUsuario?.Trim();
+            if (string.IsNullOrWhiteSpace(nombre))
+                throw new ArgumentException("NombreUsuario es requerido.");
+
+            if (string.IsNullOrWhiteSpace(dto.ContraseñaPlano))
+                throw new ArgumentException("La contraseña es obligatoria.");
+
             ValidarRol(dto.IdRol);
 
-            // 3) Validar contraseña
-            if (string.IsNullOrWhiteSpace(dto.ContraseñaPlano))
-                throw new Exception("La contraseña es obligatoria.");
+            var yaExiste = await _usuarioRepository.ExistsByNombreAsync(nombre);
+            if (yaExiste)
+                throw new InvalidOperationException("Ya existe un usuario con ese nombre.");
 
-            // 4) Generar hash
             CrearPasswordHash(dto.ContraseñaPlano, out var hash, out var salt);
 
-            // 5) Construir entidad de dominio
             var nuevoUsuario = new Usuario
             {
-                UsuarioNombre = dto.NombreUsuario,
+                UsuarioNombre = nombre,
                 UsuarioDireccion = dto.DireccionUsuario,
                 UsuarioTelefono = dto.TelefonoUsuario,
-                RolId = dto.IdRol, // puede ser Admin o Usuario, según lo haya decidido el Admin
+                RolId = dto.IdRol,
                 ContraseñaHash = hash,
                 ContraseñaSalt = salt,
                 AltaUsuario = DateTime.UtcNow,
                 EstadoUsuario = EstadoUsuario.ActivoDesconectado
             };
 
-            // 6) Persistir
             await _usuarioRepository.AddAsync(nuevoUsuario);
             await _usuarioRepository.SaveChangesAsync();
 
-            // 7) Releer con Rol incluido
+            // Releer para traer Rol si el repo lo incluye
             var creado = await _usuarioRepository.GetByIdAsync(nuevoUsuario.UsuarioId) ?? nuevoUsuario;
 
             return MapToUsuarioResponseDto(creado, DateTime.UtcNow);
@@ -135,20 +136,38 @@ namespace SmartStockV1.Services.Usuarios
 
         public async Task<UsuarioResponseDto> ActualizarUsuario(ActualizarUsuarioRequestDto dto)
         {
-            var usuario = await _usuarioRepository.GetByIdAsync(dto.IdUsuario);
-            if (usuario == null)
-                throw new Exception("Usuario no encontrado.");
+            if (dto is null)
+                throw new ArgumentException("El body es requerido.");
 
-            // Validar que el rol que quiere asignar el Admin exista
+            if (dto.IdUsuario <= 0)
+                throw new ArgumentException("IdUsuario inválido.");
+
             ValidarRol(dto.IdRol);
 
-            // Datos básicos
-            usuario.UsuarioNombre = dto.NombreUsuario;
+            var usuario = await _usuarioRepository.GetByIdAsync(dto.IdUsuario)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+
+            // Si permitís cambiar el nombre, validá duplicados
+            var nuevoNombre = dto.NombreUsuario?.Trim();
+            if (!string.IsNullOrWhiteSpace(nuevoNombre) && !string.Equals(nuevoNombre, usuario.UsuarioNombre, StringComparison.OrdinalIgnoreCase))
+            {
+                var existe = await _usuarioRepository.ExistsByNombreAsync(nuevoNombre);
+                if (existe)
+                    throw new InvalidOperationException("Ya existe un usuario con ese nombre.");
+
+                usuario.UsuarioNombre = nuevoNombre;
+            }
+            else if (string.IsNullOrWhiteSpace(usuario.UsuarioNombre))
+            {
+                // Caso raro: debería no pasar por tu modelo
+                throw new InvalidOperationException("El usuario no tiene NombreUsuario válido.");
+            }
+
             usuario.RolId = dto.IdRol;
             usuario.UsuarioDireccion = dto.DireccionUsuario ?? usuario.UsuarioDireccion;
             usuario.UsuarioTelefono = dto.TelefonoUsuario;
 
-            // Mapear bool -> enum EstadoUsuario
+            // bool -> enum
             if (dto.EstadoUsuario)
             {
                 if (usuario.EstadoUsuario == EstadoUsuario.Inactivo)
@@ -159,7 +178,6 @@ namespace SmartStockV1.Services.Usuarios
                 usuario.EstadoUsuario = EstadoUsuario.Inactivo;
             }
 
-            // Cambio de contraseña (solo si viene una nueva)
             if (!string.IsNullOrWhiteSpace(dto.NuevaContraseñaPlano))
             {
                 CrearPasswordHash(dto.NuevaContraseñaPlano, out var hash, out var salt);
@@ -179,43 +197,40 @@ namespace SmartStockV1.Services.Usuarios
 
         public async Task<UsuarioResponseDto> ObtenerPorId(int idUsuario)
         {
-            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario);
-            if (usuario == null)
-                throw new Exception("Usuario no encontrado.");
+            if (idUsuario <= 0)
+                throw new ArgumentException("IdUsuario inválido.");
 
-            var ultAct = usuario.UltConexion ?? usuario.AltaUsuario;
+            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
 
-            return MapToUsuarioResponseDto(usuario, ultAct);
+            var ultActividad = usuario.UltConexion ?? usuario.HoraConexion ?? usuario.AltaUsuario;
+            return MapToUsuarioResponseDto(usuario, ultActividad);
         }
 
-
-        // Listar todos los usuarios (admin)
         public async Task<IEnumerable<UsuarioAdminListItemDto>> ListarTodos()
         {
             var usuarios = await _usuarioRepository.GetAllAsync();
-
-            return usuarios
-                .Select(u => MapToUsuarioAdminListItemDto(u))
-                .ToList();
+            return usuarios.Select(MapToUsuarioAdminListItemDto).ToList();
         }
 
-        // Listar solo usuarios activos (admin)
         public async Task<IEnumerable<UsuarioAdminListItemDto>> ListarActivos()
         {
             var usuarios = await _usuarioRepository.GetActivoAsync();
-
-            return usuarios
-                .Select(u => MapToUsuarioAdminListItemDto(u))
-                .ToList();
+            return usuarios.Select(MapToUsuarioAdminListItemDto).ToList();
         }
 
         // ==================== CAMBIOS DE ESTADO ====================
 
         public async Task DesactivarUsuario(int idUsuario)
         {
-            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario);
-            if (usuario == null)
-                throw new Exception("Usuario no encontrado.");
+            if (idUsuario <= 0)
+                throw new ArgumentException("IdUsuario inválido.");
+
+            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+
+            if (usuario.EstadoUsuario == EstadoUsuario.Inactivo)
+                return; // idempotente
 
             usuario.EstadoUsuario = EstadoUsuario.Inactivo;
 
@@ -225,9 +240,14 @@ namespace SmartStockV1.Services.Usuarios
 
         public async Task ActivarUsuario(int idUsuario)
         {
-            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario);
-            if (usuario == null)
-                throw new Exception("Usuario no encontrado.");
+            if (idUsuario <= 0)
+                throw new ArgumentException("IdUsuario inválido.");
+
+            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+
+            if (usuario.EstadoUsuario != EstadoUsuario.Inactivo)
+                return; // idempotente
 
             usuario.EstadoUsuario = EstadoUsuario.ActivoDesconectado;
 
@@ -236,4 +256,5 @@ namespace SmartStockV1.Services.Usuarios
         }
     }
 }
+
 

@@ -1,4 +1,4 @@
-﻿namespace SmartStockV1.Dtos.Usuarios
+﻿namespace SmartStockV1.Dtos.Usuarios.Requests.Auth
 {
     public class LoginUsuarioRequestDto
     {

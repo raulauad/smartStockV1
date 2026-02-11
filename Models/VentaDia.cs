@@ -9,6 +9,5 @@
         public decimal TotalVentaDia { get; set; }
         public decimal TotalGananciaVenta { get; set; }
         public ICollection<DetalleVenta> DetallesVentas { get; set; } = new List<DetalleVenta>();
-        public CajaDia? CajaDia { get; set; }
     }
 }

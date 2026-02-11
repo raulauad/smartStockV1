@@ -9,13 +9,13 @@ namespace SmartStockV1.Models
         public int UsuarioId { get; set; }
         public string Nombre { get; set; } = null!;
         public string? CodigoBarra { get; set; }
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         public decimal PrecioCosto { get; set; }
         public decimal PrecioVenta { get; set; }
         public bool EstadoProducto { get; set; } = false;
 
-        public Categoria Categoria { get; set; }
-        public Usuario Usuario { get; set; }
+        public Categoria Categoria { get; set; } = null!;
+        public Usuario Usuario { get; set; } = null!;
         public StockActual? StockActual { get; set; }
         public ICollection<DetalleVentaItem> DetallesVentaItem { get; set; } = new List<DetalleVentaItem>();
         public ICollection<DetalleCompraItem> DetallesCompraItem { get; set; } = new List<DetalleCompraItem>();

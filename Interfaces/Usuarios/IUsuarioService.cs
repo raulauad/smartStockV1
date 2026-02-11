@@ -1,4 +1,5 @@
-﻿using SmartStockV1.Dtos.Usuarios;
+﻿using SmartStockV1.Dtos.Usuarios.Requests.Admin;
+using SmartStockV1.Dtos.Usuarios.Responses.Usuarios;
 using System.Collections.Generic;
 
 namespace SmartStockV1.Interfaces.Usuarios
@@ -9,7 +10,7 @@ namespace SmartStockV1.Interfaces.Usuarios
     {
         Task<UsuarioResponseDto> CrearUsuario(AltaUsuarioRequestDto dto); //Da de alta un nuevo usuario
         Task<UsuarioResponseDto> ActualizarUsuario(ActualizarUsuarioRequestDto dto); //Actualiza los datos de un usuario existente
-        Task<UsuarioResponseDto> ObtenerPorId(int idUsuario); //Obtiene los datos de un usuario por su ID
+        Task<UsuarioResponseDto> ObtenerPorId(int idUsuario); //Obtiene los datos de un usuario por su nombre
         Task<IEnumerable<UsuarioAdminListItemDto>> ListarTodos(); //Lista todos los usuarios, tanto activos como inactivos
         Task<IEnumerable<UsuarioAdminListItemDto>> ListarActivos(); //Lista solo los usuarios activos
         Task DesactivarUsuario(int idUsuario); //Desactiva un usuario (cambia su estado a inactivo)

@@ -1,6 +1,6 @@
-﻿namespace SmartStockV1.Dtos.Usuarios
+﻿namespace SmartStockV1.Dtos.Usuarios.Requests.Admin
 {
-    public class AltaAdminRequestDto
+    public sealed class AltaAdminRequestDto
     {
         public string NombreUsuario { get; set; } = string.Empty;              
         public string ContraseñaPlano { get; set; } = string.Empty;

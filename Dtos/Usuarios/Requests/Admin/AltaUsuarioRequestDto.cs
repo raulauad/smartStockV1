@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace SmartStockV1.Dtos.Usuarios
+namespace SmartStockV1.Dtos.Usuarios.Requests.Admin
 {
-    public class AltaUsuarioRequestDto
+    public sealed class AltaUsuarioRequestDto
     {
         public string NombreUsuario { get; set; } = null!;
         public int IdRol { get; set; } //El admin no elige el rol al crear admin, pero si al crear usuario normal

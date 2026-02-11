@@ -1,6 +1,9 @@
 ﻿namespace SmartStockV1.Interfaces.Usuarios
 {
-    using SmartStockV1.Dtos.Usuarios;
+    using SmartStockV1.Dtos.Usuarios.Requests.Auth;
+    using SmartStockV1.Dtos.Usuarios.Responses.Auth;
+    using SmartStockV1.Dtos.Usuarios.Responses.Usuarios;
+
     /// Servicio para manejar el ingreso al sistema:
     /// - Login de empleado por nombre + contraseña
     /// - Login de admin con nombre + contraseña
@@ -12,17 +15,13 @@
         // - Setea EstadoUsuario = ActivoConectado.
         // - Setea HoraConexion = DateTime.UtcNow.
         // - Devuelve UsuarioResponseDto con el estado actualizado.
-        Task<UsuarioResponseDto> LoginUsuario(LoginUsuarioRequestDto dto);
+        Task<LoginResponseDto> Login(LoginUsuarioRequestDto dto);
 
         // Login de admin:
         // - Verifica nombre + contraseña.
         // - Verifica Rol = Admin.
         // - Setea EstadoUsuario = ActivoConectado.
         // - Setea HoraConexion = DateTime.UtcNow.
-        Task<AdminResponseDto> LoginAdmin(LoginAdminRequestDto dto);
-
-        // - Setea EstadoUsuario = ActivoDesconectado.
-        // - Setea UltConexion = DateTime.UtcNow.
         Task<UsuarioResponseDto> LogoutUsuario(int idUsuario);
     }
 }
